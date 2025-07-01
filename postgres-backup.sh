@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # set variables
+DB_HOST="localhost"                 # replace db_host
+DB_PORT=5432                        # replace db_port
 DB_NAME="db_name"                   # replace db_name
 DB_USER="db_user"                   # replace db_user
 DB_PASSWORD="db_password"           # replace db_password
@@ -21,13 +23,13 @@ mkdir -p "$DAILY_BACKUP_DIR"
 mkdir -p "$MONTHLY_BACKUP_DIR"
 
 # set password with environment and create backup with gzip
-PGPASSWORD="$DB_PASSWORD" pg_dump -U "$DB_USER" -d "$DB_NAME" | gzip > "$DAILY_BACKUP_FILE"
+PGPASSWORD="$DB_PASSWORD" pg_dump -U "$DB_USER" -h "$DB_HOST" -p "$DB_PORT" -d "$DB_NAME" | gzip > "$DAILY_BACKUP_FILE"
 echo "Daily backup created: $DAILY_BACKUP_FILE"
 
 # set password with environment and create monthly backup with gzip
 if [ "$(date +%d)" -eq 1 ]; then
     MONTHLY_BACKUP_FILE="$MONTHLY_BACKUP_DIR/backup_$MONTH.sql.gz"
-    PGPASSWORD="$DB_PASSWORD" pg_dump -U "$DB_USER" -d "$DB_NAME" | gzip > "$MONTHLY_BACKUP_FILE"
+    PGPASSWORD="$DB_PASSWORD" pg_dump -U "$DB_USER" -h "$DB_HOST" -p "$DB_PORT" -d "$DB_NAME" | gzip > "$MONTHLY_BACKUP_FILE"
     echo "Monthly backup created: $MONTHLY_BACKUP_FILE"
 fi
 
